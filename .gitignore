@@ -1,0 +1,12 @@
+# Ignore everything
+*
+# But these files
+!.gitignore
+!.gitattributes
+!Makefile
+!lenna.png
+# And these filetypes
+!*.h
+!*.c
+!*.cpp
+# And these subdirectories
