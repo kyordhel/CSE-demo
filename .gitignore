@@ -3,10 +3,14 @@
 # But these files
 !.gitignore
 !.gitattributes
-!Makefile
-!lenna.png
+!CMakeLists.txt
 # And these filetypes
 !*.h
 !*.c
 !*.cpp
 # And these subdirectories
+!common/
+!demo-cse/
+!demo-par/
+!demo-seq/
+!img/
