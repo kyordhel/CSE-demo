@@ -53,8 +53,8 @@ void Element::workThreadTask(){
 		myHD.setMin(ch, min); myHD.setMax(ch, max);
 	}
 	// Step 3: Request neighbors for their data
-	propagate(myHD);
-	propagate(myHD);
+	for(int i = 1; i < std::max(nElemX, nElemY); ++i)
+		propagate(myHD);
 
 	// Step 4: Adjust image
 	for(int ch = 0; ch < 3; ++ch){
