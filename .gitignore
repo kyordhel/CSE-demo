@@ -4,11 +4,14 @@
 !.gitignore
 !.gitattributes
 !CMakeLists.txt
+!LICENSE
+!readme.MD
 # And these filetypes
 !*.h
 !*.c
 !*.cpp
 # And these subdirectories
+!build/
 !common/
 !democse/
 !demopar/
