@@ -5,7 +5,7 @@
 #include "common.h"
 
 int main(int argc, char** argv){
-	const char* imgpath = (argc > 1) ? argv[1] : "lenna.png";
+	const char* imgpath = (argc > 1) ? argv[1] : "img/lenna.png";
 	cv::Mat input = cv::imread(imgpath, cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
 
 	auto start = std::chrono::high_resolution_clock::now();

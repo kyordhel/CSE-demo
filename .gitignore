@@ -10,7 +10,7 @@
 !*.cpp
 # And these subdirectories
 !common/
-!demo-cse/
-!demo-par/
-!demo-seq/
+!democse/
+!demopar/
+!demoseq/
 !img/
