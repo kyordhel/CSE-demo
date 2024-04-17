@@ -36,7 +36,7 @@ $(TCSE): $(OBJSCSE)
 
 $(OBJDIR)/%.o: %.cpp
 	$(SILENT) mkdir -p $(dir $@)
-	$(SILENT) $(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -MMD -o $@
+	$(SILENT) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -MMD -o $@
 
 
 .PHONY: run run-seq run-par run-cse

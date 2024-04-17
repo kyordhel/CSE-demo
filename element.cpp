@@ -42,8 +42,6 @@ void Element::waitDone(){
 }
 
 void Element::workThreadTask(){
-	printf("Element %d started\n", this->ix);
-
 	// Step 1: Calculate histogram of image segment
 	histogram histo = getHistogram(img);
 
@@ -55,6 +53,7 @@ void Element::workThreadTask(){
 		myHD.setMin(ch, min); myHD.setMax(ch, max);
 	}
 	// Step 3: Request neighbors for their data
+	propagate(myHD);
 	propagate(myHD);
 
 	// Step 4: Adjust image
@@ -72,39 +71,30 @@ void Element::workThreadTask(){
 
 void Element::propagate(HistoData& myHD){
 	// Top and left elements inject dummy data to prevent deadlocks
-	if(posX == 0) wc->send(HistoData());
-	if(posY == 0) nc->send(HistoData());
+	if(posX == 0) wc->sendOne(HistoData());
+	if(posY == 0) nc->sendOne(HistoData());
+	if(posX == (nElemX-1)) ec->sendTwo(HistoData());
+	if(posY == (nElemY-1)) sc->sendTwo(HistoData());
 
 	HistoData rcvHD;
 
 	// Dir LR >
-	ec->send(myHD);
-	wc->fetch(rcvHD);
+	ec->sendOne(myHD);
+	wc->fetchOne(rcvHD);
 	myHD.mergeWith(rcvHD);
-	printf("Element (%d,%d): Propagation LR complete!\n", posX, posY);
 
 	// Dir UD v
-	sc->send(myHD);
-	nc->fetch(rcvHD);
+	sc->sendOne(myHD);
+	nc->fetchOne(rcvHD);
 	myHD.mergeWith(rcvHD);
-	printf("Element (%d,%d): Propagation UD complete!\n", posX, posY);
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 	// Dir RL <
-	wc->send(myHD);
-	// printf("Element (%d,%d): Sent to west\n", posX, posY);
-	ec->fetch(rcvHD);
+	wc->sendTwo(myHD);
+	ec->fetchTwo(rcvHD);
 	myHD.mergeWith(rcvHD);
-	// printf("Element (%d,%d): Received from east\n", posX, posY);
-	printf("Element (%d,%d): Propagation RL complete!\n", posX, posY);
 
 	// Dir BU ^
-	nc->send(myHD);
-	// printf("Element (%d,%d): Sent to west\n", posX, posY);
-	sc->fetch(rcvHD);
-	// printf("Element (%d,%d): Received from east\n", posX, posY);
+	nc->sendTwo(myHD);
+	sc->fetchTwo(rcvHD);
 	myHD.mergeWith(rcvHD);
-
-	printf("Element (%d,%d): Propagation complete!\n", posX, posY);
 }

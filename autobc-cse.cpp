@@ -18,8 +18,9 @@
 #define H_ELEMENTS 3
 #define V_ELEMENTS 3
 
-int main(){
-	cv::Mat input = cv::imread("lenna.png", cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
+int main(int argc, char** argv){
+	const char* imgpath = (argc > 1) ? argv[1] : "lenna.png";
+	cv::Mat input = cv::imread(imgpath, cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
 	auto start = std::chrono::high_resolution_clock::now();
 
 	cv::Mat output = input.clone();
@@ -72,6 +73,11 @@ int main(){
 	std::cout << "Image brightnes/contrast autobalance took " <<
 	std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() << "ms" << std::endl;
 
+	// cv::namedWindow("Original image", cv::WINDOW_NORMAL);
+	// cv::namedWindow("Corrected image", cv::WINDOW_NORMAL);
+	float scaleFactor = std::min(720.0 / input.rows, 1.0);
+	cv::resize(input, input, cv::Size(input.cols*scaleFactor, input.rows*scaleFactor));
+	cv::resize(output, output, cv::Size(output.cols*scaleFactor, output.rows*scaleFactor));
 	cv::imshow("Original image", input);
 	cv::imshow("Corrected image", output);
 

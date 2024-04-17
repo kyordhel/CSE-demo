@@ -9,41 +9,38 @@
 
 #include <opencv2/core.hpp>
 
+#include "syncq.h"
 
 template<typename T>
 class Channel{
 public:
-	Channel<T>(): mutex(), hasItem(false){
+	Channel<T>(){
 		ix = ++Channel::ccount;
-		cvWrite.notify_one();
 	}
 
 	Channel<T>(const Channel<T>& other) = delete;
-	Channel<T>(Channel<T>&& other): mutex(){
+	Channel<T>(Channel<T>&& other){
 		std::swap(*this, other);
 		std::cout << "Moved channel " << ix << " (ctor)" << std::endl;
 	};
 
 public:
-	void fetch(T& value){
-		std::unique_lock<std::mutex> lock(mutex);
-		cvRead.wait(lock, [this]{ return this->hasItem; });
-		value = this->value;
-		hasItem = false;
-		lock.unlock();
-		cvWrite.notify_one();
-		// printf("Channel %d is empty\n", ix);
+	void fetchOne(T& value){
+		value = q1.dequeue();
 	}
 
-	void send(const T& value){
-		std::unique_lock<std::mutex> lock(mutex);
-		cvWrite.wait(lock, [this]{ return !this->hasItem; });
-		this->value = value;
-		hasItem = true;
-		lock.unlock();
-		cvRead.notify_one();
-		// printf("Channel %d has 1 element\n", ix);
+	void sendOne(const T& value){
+		q1.enqueue(value);
 	}
+
+	void fetchTwo(T& value){
+		value = q2.dequeue();
+	}
+
+	void sendTwo(const T& value){
+		q2.enqueue(value);
+	}
+
 
 
 public:
@@ -62,12 +59,9 @@ public:
 */
 
 private:
-	T value;
-	std::mutex mutex;
-	std::condition_variable cvRead;
-	std::condition_variable cvWrite;
+	SyncQ<T> q1, q2;
+
 	int ix = 0;
-	bool hasItem;
 	static int ccount;
 };
 
