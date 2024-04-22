@@ -4,17 +4,9 @@
 !.gitignore
 !.gitattributes
 !CMakeLists.txt
-!LICENSE
-!readme.MD
 # And these filetypes
 !*.h
 !*.c
 !*.cpp
-# And these subdirectories
-!build/
-!common/
-!democse/
-!demomw/
-!demopar/
-!demoseq/
-!img/
+# Even if they are in subdirectories
+!**/
