@@ -14,3 +14,5 @@ add_subdirectory(common)
 add_subdirectory(demoseq)
 add_subdirectory(demopar)
 add_subdirectory(democse)
+
+add_subdirectory(demomw)
